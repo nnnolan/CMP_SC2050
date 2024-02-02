@@ -41,104 +41,91 @@ tails, or you can assume the reverse – it shouldn't matter.
 #include <stdio.h>
 #include <stdlib.h>
 
+int coinTossGame(int player1[3], int player2[3], int *winner, int *numTosses);
+int checkWinner(int *winner, int *aliceWins, int *bobWins);
 
-int coinTossGame(char player1[3], char player2[3], int *winner, int *numTosses);
+int main() {
+
+    int bob[3] = {0,1,1}; //THH
+    int alice[3] = {1,1,0}; // HHT
+
+    int winner, aliceWins, bobWins = 0;
+
+    int games = 500; // modify
+    int numTosses = 100; // also modifiable
 
 
-int main () {
-
-    int winner, numTosses, aliceWins, bobWins 0;
-
-    int simulations = 500; // modifiable
-
-    int *winnerPtr = &winner; 
-    int *numTossesPtr = &numTosses;   // idk if this is the most efficient way 
-
-    char aliceSequence[] = {'H', 'H', 'T'}; // curaly braces give us the int
-    char bobSequence[] = {'T', 'H', 'H'};
-
-    
-    for (int i = 0; i < simulations; i++) {
-        int result = coinTossGame(aliceSequence, bobSequence, &winner, &numTosses);
-        if (result == 0) {
-            if (winner == 1) {
-                aliceWins++;
-            } else {
-                bobWins++;
-            }
-        }
-        else {
-            printf("Error %d occurred during simulation.\n", result);
-        }
+    for (int i = 0; i<games; i++) {
+        coinTossGame(bob, alice, &winner, &numTosses);
+        checkWinner(&winner, &aliceWins, &bobWins);
     }
 
-    result = coinTossGame(aliceSequence, bobSequence, winnerPtr, numTossesPtr);
+    printf("\n Alice Wins: %d \n", (aliceWins));
+    printf("\n Bob Wins: %d \n", (bobWins));
 
+    float alicePercentage = aliceWins/games;
+    float bobPercentage = bobWins/games;
 
-    if (winner == 1) {
-        aliceWins++;
-    } else if (winner == 2) {
-        bobWins++;
-    }
-    
-
-
-
-    float aliceWinPercentage = (float)aliceWins / simulations * 100;
-    float bobWinPercentage = (float)bobWins / simulations * 100;
-
-    // Display results
-    printf("Alice's Winning Percentage: %.2f%%\n", aliceWinPercentage);
-    printf("Bob's Winning Percentage: %.2f%%\n", bobWinPercentage);
-
-    // my_reslt = coinTossGame()
-
+    printf("\n Alice %c: %f \n",37,(alicePercentage));
+    printf("\n Bob %c: %f \n", 37, (bobPercentage));
 
     return 0;
 }
 
 
+int coinTossGame(int player1[3], int player2[3], int *winner, int *numTosses) {
 
-int coinTossGame(char player1[3], char player2[3], int *winner, int *numTosses){
+    int j = *numTosses;
+    int tossResult[j];
+    *winner = 0;
 
-    // flip the coin
-    // we'll say heads is divisble by two, and tails is not. so even heads odds taisl
-    int toss;
-    int counter = 0;
-    char history[1000];
+    for (int i = 0; i<*numTosses;i++){
+        
+        int toss = rand() % 2;
+        
+        if (toss==0) {
+            tossResult[i] = 0; //tails
+        }
+        else if (toss == 1) {
+            tossResult[i] = 1; // heads
+        }
+        else {
+            scanf("something went wrong");
+        }
+    }
 
+    for (int i=0; i<(*numTosses+2);i++) {
 
+        // check bob, HHT
+        if (tossResult[i] == 0 && tossResult[i-1] == 1 && tossResult[i-2] ==1){
+            // bob wins!
+            *winner = 1;
+            return 0;
 
-    do {
-
-        toss = rand()%2;
-
-        if (toss == 0) {
-            // heads
-            history[counter] = 'H';
-        } else {
-            //tails
-            history[counter] = 'T';
         }
 
-        counter++;
+        if (tossResult[i] == 1 && tossResult[i-1] == 1 && tossResult[i-2] ==0){
+            // alice wins !
+            *winner = 2;
+            return 0;
+        }
 
-            // alice HHT
-        if (counter >= 3 && history[counter - 3] == 'H' && history[counter - 2] == 'H' && history[counter - 1] == 'T') {
-                *winner = 1; // Alice won
-                *numTosses = counter; // Set the number of tosses
-                return 0;
-            };
+    }
 
+    return 0;
 
-            if (counter >= 3 && history[counter - 3] == 'T' && history[counter - 2] == 'H' && history[counter - 1] == 'H'){
-                *winner = 2; // Bob won
-                *numTosses = counter; // Set the number of tosses
-                return 0;
-            }
+}
 
-    } while(counter < 1000);
-    
-    
-    return -1;
+int checkWinner(int *winner, int *aliceWins, int *bobWins) {
+
+    if (*winner == 1) {
+        printf("Bob wins !\n");
+        *bobWins = *bobWins + 1;
+    }
+    else if (*winner == 2) {
+        printf("Alice wins !\n");
+        *aliceWins = *aliceWins + 1;
+    }
+
+    return 0;
 }

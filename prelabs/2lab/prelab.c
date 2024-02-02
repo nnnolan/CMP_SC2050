@@ -2,31 +2,70 @@
 #include <stdlib.h>
 
 
-void flip_a_coin(int *arr[], int size);
+float * readFloatFileIntoArray(FILE *fptr, int *length);
+void freeFloatArray(float ** arrPtr);
 
+int main() {
 
-int main () {
+    FILE *fptr;
 
-    char Bob[3] = {'T', 'H', 'H'};
-    char Alice[3] = {'H', 'H', 'T'};
+    fptr = fopen("test.txt","r");
     
-    char coin_tosses[100] = {0};
+    if (fptr == NULL ){
+        printf("error opening file");
+        return 0;
+    }
 
+    // char length = fgetc(fptr);
+    // printf("%c\n", length);
+
+    int length;
+
+    float *floatArray = readFloatFileIntoArray(fptr, &length);
+
+    // readFloatFileIntoArray(fptr, &length);
+    if (floatArray != NULL ) {
+        for (int i =0; i<length; i++){
+            printf("%f ", floatArray[i]);
+        }
+    }
+    else {
+        printf("float array returned a null ! ");
+    }
+
+
+    freeFloatArray(&floatArray);
+    fclose(fptr);
 
     return 0;
 }
 
 
+float * readFloatFileIntoArray(FILE *fptr, int *length) {
 
-void flip_a_coin(int *arr[], int size) {
-    if (size > 100) {
-        return;
+    fscanf(fptr, "%d", length);
+    // printf("%d", length);
+
+
+    float *array_ptr =  (float*)malloc( (sizeof(float) * (*length) ));
+
+    if ( array_ptr == NULL ){
+        printf("memory error");
+        return 0;
     }
-    else
-    {
-        for (int i = 0; i < size; i++)
-        {
-            arr[i] = rand() % 2;
-        }
+
+    for(int i=0; i<*length; i++){
+        fscanf(fptr, "%f", &array_ptr[i]);
     }
+
+
+    return array_ptr;
+}
+
+void freeFloatArray(float ** arrPtr){
+
+    free(*arrPtr);
+
+    *arrPtr = NULL;
+
 }
