@@ -1,30 +1,12 @@
 #include "lab2.h"
 
 
-// DELLETEEE THIS
-int main() {
-
-    int * my_ptr = makeArray(5);
-
-    for (int i =0; i<6; i++){
-        printf("%d\n", my_ptr[i]);
-    }
-
-    int my_arr[4] = {0, 1, 2, 3};
-    int * final_array = NULL;
-
-    printf("%s",addressOf(my_arr, 4, 2));
-
-    printf("%d", sliceArray(my_arr, 4, 0, 2, &final_array));
-
-}
-
 int * makeArray(int size) {
 
     /* we'll create an array of size n, where n = size (array of size size :P)
     we want to return the pointer, a malloc. and then init 0 */
 
-    int *array_ptr =  (int*)malloc( (sizeof(int) * (size) )); 
+    int *array_ptr =  (int *)malloc( sizeof(int) * size); 
 
 
     // check if malloc failed-- malloc returns null on failed exec
@@ -49,7 +31,7 @@ int * addressOf(int *array, int size, int element){
     for (int i = 0; i < size; i++) {
 
         if (array[i] == element) { //bingo
-            printf("match found, location on array : %d. returning address of array[%d]", i, i);
+            printf("match found, location on array : %d. returning address of array[%d]\n", i, i);
             return &array[i];
         }
     }
@@ -70,50 +52,45 @@ int sliceArray(int *array, int size, int begin, int end, int **result){
 
    // lets check to see if both end points are valid first
    // we'll store begin and end as beginIndex and endIndex respectively
-    int beginIndex;
-    int endIndex;
+    int *beginAddress = addressOf(array, size, begin); 
+    int *endAddress = addressOf(array, size, end);
 
-    int * beginAddress;
-    int * endAddress;
-
-    beginAddress = addressOf(array, size, begin); 
-    endAddress = addressOf(array, size, end);
-
-    printf("begin address %d, end addrees %d",*beginAddress, *endAddress); // seg fault oh my GOSHSH
-
-    if ( (beginAddress == NULL) || (endAddress == NULL) ) {
+   if ( (beginAddress == NULL) || (endAddress == NULL) ) {
         // if beginIndex is false OR endIndex is false, then at least one is missing. return -1 as directed by high lord prof uhlman
         printf("one or both indexes not found !");
         return -1;
     }
+
+
+    int beginIndex = *beginAddress;
+    int endIndex = *endAddress;
+
+
 
     // so now we have both indexes. we still have to slice the index. so we can start from the bottom index and stop at the top index.
     // can just use the derefrence address , as if end index is 9 and begin index is 3, then 9-3 = 6, size of our  final array size
     int finalArraySize = endIndex-beginIndex;
     
     // we'll create an array of size finalArraySize
-    int * finalArray = makeArray(finalArraySize);
+    int *finalArray = makeArray(finalArraySize);
 
     // now we steal values from the first array and populate final array with them
-    // inclusive end points so <=
-    
-    int endIndexCount = endIndex; // not sure if this part is needed but security 
-    int beginIndexCount = beginIndex;
-
-    for (int i = 0; i<=finalArraySize; i++){
-
-        finalArray[i] = array[beginIndexCount];
-        beginIndexCount++;
-        // this should loop til i = finalArraySize = beginIndexCount
+    for (int i = 0; i<finalArraySize; i++){
+        finalArray[i] = beginAddress[i];
     }
     
-    *result[0] = finalArray[0];
+    // point the first index of final array to result
+    *result = &finalArray[0];
+    // return size of arary
     return finalArraySize;
 }
 
+// nice to just have this cooldown. sotlen from prelab.
 void freeArray(int **array){
 
     free(*array);
     *array = NULL;
 }
+
+// jesus this is only the second lab.
 
