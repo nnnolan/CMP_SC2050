@@ -1,14 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
 int * createIntArray(FILE *fptr, int *length);
 float getArrayMean(int*);
-void freeIntArray(int*) ;
-
+void freeIntArray(int*);
 
 int main () {
-
     FILE *fptr;
 
     fptr = fopen("test.txt","r");
@@ -22,59 +19,50 @@ int main () {
 
     int *intArray = createIntArray(fptr, &length);
 
-    printf("%d", intArray[-1]);
-
+    printf("Mean of the array: %.2f\n", getArrayMean(intArray));
 
     fclose(fptr);
     freeIntArray(intArray);
-
 
     return 0;
 }
 
 int * createIntArray(FILE *fptr, int *length) {
     int* array = NULL;
-    float mean, sum;
+    int sum = 0;
     *length = 0;
 
+    
     fscanf(fptr, "%d", length);
-    printf("size of array to be createid is %d\n", *length);
-
-    // extra size of int to hide one inside
-    array = (int *)malloc((*length) * sizeof(int) + sizeof(float)); // Allocate memory for the array
-
+    // Allocate memory for the array
+    array = (int *)malloc((*length) * sizeof(int));
     if (!array){
         printf("error in memory alloc!");
+        exit(1);
     }
   
-
-    // now we read data from file into the array
-    // so user can access length array at index[-1]
-    for (int i = 0; i<((*length)); i++) {
-        
+    // Read data from file into the array
+    for (int i = 0; i < *length; i++) {
         if (feof(fptr)) {
-            *length = (1-i);
+            *length = i;
             break;
         }
-
-        // this happens awlays if ^ isnt true
         fscanf(fptr, "%d", &(array[i]));
         sum += array[i];
     }
 
-    // assign array 0 
-    ((float*)array)[0] = (((float)sum) / (float)*length);
+    // Calculate mean and store it at the end of the array
+    float mean = (float)sum / *length;
+    *((float*)(array + *length)) = mean;
 
     return array;
 }
 
-
-
 float getArrayMean(int* arr){
-    return *((float*)arr - 1);
+    // Retrieve mean stored at the end of the array
+    return *((float*)(arr + *(((int*)arr)-1)));
 }
 
 void freeIntArray(int* arr){
-
-    free(arr -1);
+    free(arr);
 }
