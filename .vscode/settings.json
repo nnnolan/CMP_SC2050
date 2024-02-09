@@ -5,6 +5,9 @@
         "time.h": "c",
         "stdlib.h": "c",
         "lab0.h": "c",
-        "lab2.h": "c"
+        "lab2.h": "c",
+        "__locale": "c",
+        "string": "c",
+        "string_view": "c"
     }
 }
