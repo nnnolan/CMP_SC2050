@@ -8,19 +8,26 @@ typedef struct {
 } Employee;
 
 Employee * readEmployeeArray(FILE *fp);
+Employee * getEmployeeByID(Employee *, int empID);
+int setEmpSalary(Employee *, int empID, float salary);
+int getEmpSalary(Employee *, int empID, float *salary);
+int setEmpJobType(Employee *, int empID, int job);
+int getEmpJobType(Employee *, int empID, int *job);
+void freeEmployeeArray(Employee * employeeArray);
 
 int main () {
     
     FILE *fp = fopen("test.txt", "r");
     if (fp == NULL) {
-        printf("Error opening file");
-        return 1; // Return non-zero to indicate error
+        printf("Error opening file\n");
+        return 1; // return one to indicate error
     }
 
     Employee* employeeList = readEmployeeArray(fp);
 
-    free(employeeList);
+    freeEmployeeArray(employeeList);
 
+    return 0;
 }
 
 
@@ -64,4 +71,84 @@ Employee * readEmployeeArray(FILE *fp) {
     return employeeArray;
 
 
+}
+
+Employee * getEmployeeByID(Employee * employeeArray, int empID){
+
+    int length = *((int*)employeeArray - 1); // Retrieve the length from the previous integer
+    for (int i = 0; i<length; i++){
+
+        if(employeeArray[i].empID == empID) {
+            return &employeeArray[i];
+        }
+
+    }
+
+    // assuming we dont find it
+    return NULL;
+}
+
+int setEmpSalary(Employee * employeeArray, int empID, float salary) {
+
+    Employee *employee = getEmployeeByID(employeeArray, empID);
+
+    if(employee != NULL) {
+        employee->salary = salary;
+        return 0;
+    }
+    // when we don't find the emp
+    else {
+        return 1;
+    }
+
+}
+
+int getEmpSalary(Employee * employeeArray, int empID, float *salary){
+
+    Employee *employee = getEmployeeByID(employeeArray, empID);
+
+    if(employee != NULL) {
+        *salary = employee->salary;
+        return 0;
+    }
+
+    else{
+        return 1;
+    }
+}
+int setEmpJobType(Employee * employeeArray, int empID, int job){
+
+    Employee *employee = getEmployeeByID(employeeArray, empID);
+
+    if(employee != NULL) {
+        employee->jobType = job;
+        return 0;
+    }
+
+    // when we don't find the emp
+    else {
+        return 1;
+    }
+}
+
+
+int getEmpJobType(Employee * employeeArray, int empID, int *job){
+
+    Employee *employee = getEmployeeByID(employeeArray, empID);
+
+    if(employee != NULL) {
+        *job = employee->jobType;
+        return 0;
+    }
+
+    else{
+        return 1;
+    }
+
+}
+
+void freeEmployeeArray(Employee * employeeArray) {
+
+    free(employeeArray);
+    employeeArray = NULL;
 }
