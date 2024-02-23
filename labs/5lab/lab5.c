@@ -27,6 +27,16 @@ VendingMachine * newMachine(int numSlots) {
     // this creates enough room for our list
     wipVendingMachine->listOfItemPointers = malloc(sizeof(StockItem*) * numSlots);
 
+    // init each slot to hold an item
+    for (int i = 0; i<numSlots; i++){
+        wipVendingMachine->listOfItemPointers[i] = malloc(sizeof(StockItem));
+        
+        // also check for malloc fails
+        if (!wipVendingMachine->listOfItemPointers[i]){
+            return NULL;
+        }
+    }
+
     // check if malloc failed
     if (!wipVendingMachine->listOfItemPointers){
         //printf("malloc error\n");
@@ -74,12 +84,14 @@ int addStockItem(VendingMachine *vm, StockItem item){
     i dont know if this is the inteded way to do it but shrug looool
     
     */
-    vm->listOfItemPointers[vm->occupiedSlots] = malloc(sizeof(StockItem));
 
-    if(!vm->listOfItemPointers[vm->occupiedSlots]){
-        // malloc error
-        return 0;
-    }
+   // i thik this below commented out code isnt neede anymore
+    // vm->listOfItemPointers[vm->occupiedSlots] = malloc(sizeof(StockItem));
+
+    // if(!vm->listOfItemPointers[vm->occupiedSlots]){
+    //     // malloc error
+    //     return 0;
+    // }
 
     // set the slot to item, we are in pointers now
     *vm->listOfItemPointers[vm->occupiedSlots] = item; 
