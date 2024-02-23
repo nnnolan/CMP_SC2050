@@ -1,4 +1,5 @@
-#include "Lab 4 quiz.h"
+#include "lab4.h"
+
 
 GameBoard * newBoard() {
 
