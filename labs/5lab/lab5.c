@@ -1,5 +1,6 @@
 #include "lab5.h"
 
+typedef struct VendingMachine_t VendingMachine;
 
 struct VendingMachine_t {
 
@@ -11,8 +12,8 @@ struct VendingMachine_t {
     // this is the complex part...
     // we are going to create a list of pointers type stock item, that will point to items
     StockItem** listOfItemPointers; // trust the process ^_^
-
 };
+
 
 VendingMachine * newMachine(int numSlots) {
 
@@ -46,14 +47,12 @@ VendingMachine * newMachine(int numSlots) {
     // now lets init everything in item to 0
     for (int i=0; i<numSlots; i++){
 
-        // grab the current item
-        StockItem *curr = wipVendingMachine->listOfItemPointers[i];
-
         // now set everything about it to 0
-        curr->ID = 0;
-        curr->maxStock = 0;
-        curr->price = 0;
-        curr->stock =0;
+        // could use a pointer but nbd
+        wipVendingMachine->listOfItemPointers[i]->ID = 0;
+        wipVendingMachine->listOfItemPointers[i]->maxStock = 0;
+        wipVendingMachine->listOfItemPointers[i]->price = 0;
+        wipVendingMachine->listOfItemPointers[i]->stock =0;
 
     }
 
@@ -100,6 +99,35 @@ int addStockItem(VendingMachine *vm, StockItem item){
 
     // return 1 for success
     return 1;
+}
+
+int removeStockItem(VendingMachine *vm , int ID, StockItem *result) {
+    
+    // lets find hte item with id ID
+    for (int i=0;i<vm->numMaxSlots;i++){
+
+        if (vm->listOfItemPointers[i]->ID == ID){
+            // we found it 
+            // instrucitons really only say we need to empty it, no need to overengineer htis tbh
+
+            vm->listOfItemPointers[i]->ID = 0;
+            vm->listOfItemPointers[i]->stock = 0;
+            vm->listOfItemPointers[i]->maxStock = 0;
+            vm->listOfItemPointers[i]->price = 0;
+
+            // we return pointer to this empty place
+            StockItem emptyReuslt = *(vm->listOfItemPointers[i]);
+            *result = emptyReuslt;
+
+            //successful
+            return 1;
+        }
+
+    }
+    // no bites, return 0
+    return 0;
+
+
 }
 
 int countExpensive(VendingMachine *vm){
