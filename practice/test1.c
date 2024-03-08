@@ -8,12 +8,23 @@ typedef struct nstruct {
 
 
 int main() {
-    Node myNode, *yourNode;
+    // Node myNode, *yourNode;
 
-    Node *p = NULL;
+    // Node *p = NULL;
     
 
-    int myKey = (*p).key;
+    // int myKey = (*p).key;
+
+
+
+    int *p=NULL, n=5;
+    *p = n;
+
+    *p = 2;
+
+    printf("%d",n);
+
+
 
     return 0;
 }
