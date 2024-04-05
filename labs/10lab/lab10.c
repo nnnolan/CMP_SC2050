@@ -33,7 +33,7 @@ Queue * newQueue(void){
     aNewBeginning->next = NULL;
 
     // eek
-    aNewBeginning->size = 1;
+    aNewBeginning->size = 0;
 
     // more addition
     aNewBeginning->end = NULL;
@@ -75,7 +75,8 @@ int enQueue(Queue *q, void *data){
 
     
     if (q->end == NULL) {
-        // this means its both start and finish at the same time 
+        // this means its both start and finish at the same time
+        // my implementation is most sense for it to be this way. i think.
         q->next = newItem;
         q->end = newItem;
     }
@@ -106,7 +107,7 @@ void * peek(Queue *q){
 }
 
 // same idea as peek, except we actually remove first item in order
-void * deQueue(Queue *q){
+void * deQueue(Queue *q){   
 
     // empty check
     if (q == NULL){
@@ -118,7 +119,7 @@ void * deQueue(Queue *q){
     void* dataToReturn = q->data;
 
     // shift q down one
-    *q = *q->next;
+    q = q->next;
 
     // take one off the size
     q->size = (q->size) - 1;
@@ -150,4 +151,4 @@ the queue belongs to the user, not to your implementation.
 
 }
 
-
+// ^_^
