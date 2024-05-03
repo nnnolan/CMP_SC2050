@@ -11,87 +11,114 @@ max heap just means the parent is greater than the children
 
 
 struct Heap_t {
-
-    void* dataNode;
-    Heap* left;
-    Heap* equal; 
-    Heap* right; 
-
+    struct Heap_t* root; // trakcs the root
 };
 
-Heap *makeHeap(void) {
-    // create a heap 
-    // we can interpt creating a heap as just creating a node in a binary tree
-    // so we can just malloc a new node, and treat it as a heap
-    Heap *newNode = malloc(sizeof(Heap));
+typedef struct HeapNode_t {
+    void* nodeData;
+    struct HeapNode_t *left;
+    struct HeapNode_t *right;
+} HeapNode;
 
-    if (newNode == NULL) {
+// my functs
+HeapNode *createNode(void* data);
+void swapNodes (HeapNode *a, HeapNode *b);
+
+
+
+// creates a new node, returns null if not well else the node. 
+HeapNode *createNode(void* data){
+    HeapNode *myNode = malloc(sizeof(HeapNode));
+    
+    if (myNode == NULL) {
+        return NULL;
+    }
+    
+    myNode->nodeData = data;
+    myNode->left = NULL;
+    myNode->right = NULL;
+
+    return myNode;
+}
+void swapNodes (HeapNode *a, HeapNode *b) {
+    void *tempData = a->nodeData;
+    HeapNode *tempLeft = a->left;
+    HeapNode *tempRight = a->right;
+
+    a->nodeData = b->nodeData;
+    a->left = b->left;
+    a->right = b->right;
+
+    b->nodeData= tempData;
+    b->left = tempLeft;
+    b->right = tempRight;
+}
+
+
+
+Heap *makeHeap(void) {
+    // createa heap in o(1)
+    // null if memory else returns teh heeap
+    Heap *newHeap = malloc(sizeof(Heap));
+    if (newHeap == NULL) {
         return NULL;
     }
 
-    newNode->left = NULL;
-    newNode->right = NULL;
-    newNode->equal = NULL;
-    newNode->dataNode = NULL;
+    newHeap->root = NULL;
 
-    return newNode;
-
+    return newHeap;
 }
 
-int compareHeap(void *a, void *b) {
-    // this function MUST be removed when submitted
-    // but we can assume it comapres a and b
-    // if a > b, it retunrs 1, if a < b, it returns -1, if a == b, it returns 0
-    if (a > b) {
-        return 1;
-    } else if (a < b) {
-        return -1;
-    } else {
-        return 0;
-    }
-}
+// int insertHeap(void *a, void *b)
+// not needed so wtvs ? :D
 
+int insertHeap(Heap *heap, void *data) {
+    // this is the meat and potatoes of this program
+    // insert a heap in this heap using binary search and randomization.
+    // one on success, zero on faulure
 
-int insertHeap(Heap *heap , void *data) {
-    // "You are required to use randomization to maintain balance during insertion"
-    // this is a max heap, so the parent must be greater than the children, randomization is used to maintain balance ???
-
-    //returns 1 on success, 0 on failure
-
-    // first check if the entire thing is empty, if so than this is the start
-    if (heap == NULL){
-        heap->dataNode = data;
-    }
-
-    // or if the start has the same data
-    if (heap->dataNode == data){
-        heap->equal == data;
-    }
-
-    // create a node using the data
-    Heap *newNode = malloc(sizeof(Heap));
+    HeapNode *newNode = createNode(data);
     if (newNode == NULL) {
         return 0;
     }
 
-    newNode->left = NULL;
-    newNode->right = NULL;
-    newNode->equal =NULL;
-    newNode->dataNode = data;
+    int randomDirection = toss(); // we will assume 0 goes left, and right goes 1
 
+    // we don't have a start
+    if (heap->root == NULL){
+        heap->root = newNode;
+    } else {
 
-    // now we can actually insert using binary saerch implementations
-    if (compareHeap(heap->dataNode, newNode->dataNode) == 1) {  // if a > b, the present node is "bigger" than the one we are trying to implement. we will go to the left
-        heap->left 
+        HeapNode *parent = heap->root;
+
+        // start finding
+        while (1) {
+            if (randomDirection == 0) { // we are going left
+                if (parent->left == NULL) { // we have found the extent
+                    parent->left == newNode; // replace it
+                    break;
+                } 
+                // else go down one
+                parent = parent->left;
+
+            } else { // now we go right
+                if (parent->right == NULL) { // likewise found the extent
+                    parent->right = newNode; // replace it
+                    break;
+                }
+                // else keep going on
+                parent = parent->right;
+            }
+        randomDirection = rand() %2; // more random location
+        }
+
     }
-
+    // mama we made it
+    return 1;
+    
 }
 
 
 int main(){
-
-    Heap *myHeap = makeHeap();
-
-    free(myHeap);
 
 }
