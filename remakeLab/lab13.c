@@ -23,6 +23,7 @@ typedef struct HeapNode_t {
 // my functs
 HeapNode *createNode(void* data);
 void swapNodes (HeapNode *a, HeapNode *b);
+void destroyNode(HeapNode *node);
 
 
 
@@ -40,18 +41,16 @@ HeapNode *createNode(void* data){
 
     return myNode;
 }
-void swapNodes (HeapNode *a, HeapNode *b) {
-    void *tempData = a->nodeData;
-    HeapNode *tempLeft = a->left;
-    HeapNode *tempRight = a->right;
 
-    a->nodeData = b->nodeData;
-    a->left = b->left;
-    a->right = b->right;
 
-    b->nodeData= tempData;
-    b->left = tempLeft;
-    b->right = tempRight;
+void destroyNode(HeapNode *node) {
+    // lil recusrive stuff
+    if (node == NULL) { 
+        return;
+    }
+    destroyNode(node->left);
+    destroyNode(node->right);
+    free(node);
 }
 
 
@@ -74,7 +73,7 @@ Heap *makeHeap(void) {
 
 int insertHeap(Heap *heap, void *data) {
     // this is the meat and potatoes of this program
-    // insert a heap in this heap using binary search and randomization.
+    // insert a heap in this heap using  randomization.
     // one on success, zero on faulure
 
     HeapNode *newNode = createNode(data);
@@ -86,7 +85,8 @@ int insertHeap(Heap *heap, void *data) {
 
     // we don't have a start
     if (heap->root == NULL){
-        heap->root = newNode;
+        heap->root = heap;
+        return 1;
     } else {
 
         HeapNode *parent = heap->root;
@@ -95,7 +95,7 @@ int insertHeap(Heap *heap, void *data) {
         while (1) {
             if (randomDirection == 0) { // we are going left
                 if (parent->left == NULL) { // we have found the extent
-                    parent->left == newNode; // replace it
+                    parent->left = newNode; // replace it
                     break;
                 } 
                 // else go down one
@@ -116,6 +116,48 @@ int insertHeap(Heap *heap, void *data) {
     // mama we made it
     return 1;
     
+}
+
+void *deleteMax(Heap *heap) {
+    // binary ysearch for the max and then delete it
+    if (heap->root == NULL){
+        return NULL; // empty
+    }
+
+    // we can use compare to determine if we go right or left, which is essential log n, dividing everything i nhalf. i think
+    HeapNode *parent = heap->root;
+    while(1) {
+        if (parent->left == NULL && parent->right == NULL){
+            // we foudn the max !
+            void* tempData = parent->nodeData;
+            destroyNode(parent);
+            return tempData;
+
+        }
+        if (compareHeap(parent->left, parent->right) == 1){ // left is bigger than right, we go that way
+            parent = parent->left;
+        } else if (compareHeap(parent->left, parent->right) == -1) { // right is bigger than left, we go that way
+            parent = parent->right;
+        }
+        else{
+            printf("idk sorry");
+            break;
+        }
+    };
+
+    return NULL;
+
+}
+
+void destroy(Heap *heap) {
+    // delete all
+
+    if (heap == NULL){
+        return; // empty 
+    }
+
+    destroy(heap->root);
+    free(heap);
 }
 
 
